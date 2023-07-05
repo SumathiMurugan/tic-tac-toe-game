@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <title>Tic Tac Toe</title>
+    <style>
+        button.b1{
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            font-weight: bolder;
+            font-size: 20px;
+            color:#111827;
+            background-color: #FBBF24;
+        }
+        .first-color {
+            color: #93C5FD;
+            font-size: 40px;
+        }
+
+        .second-color {
+            color: #FBBF24;
+            font-size: 40px;
+        }
+
+        .container {
+            display: flex;
+            padding-left: 40px;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .board{
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-gap: 15px;
+            color: #93C5FD;
+        }
+        .cell {
+            display: flex;
+            border-radius: 10px;
+            justify-content: center;
+            align-items: center;
+            width: 120px;
+            height: 120px;
+            font-weight: bold;
+            font-size: 36px;
+            background-color: #374151;
+            cursor: pointer;
+        }
+        button{
+            padding: 10px;
+            padding-right: 20px;
+            padding-left: 20px;
+            margin-top: 10px;
+            background-color: #FBBF24;
+            font-size: 20px;
+            color: #111827;
+            border-radius: 10px;
+        }
+        .status {
+            margin-top: 20px;
+            font-size: 24px;
+            color: white;
+        }
+    
+    </style>
+</head>
+<body style="background-color:#111827;">
+    <button class="b1">TIC TAC TOE</button>
+    <div class="container">
+        <h2>
+            <span class="first-color"><b>X</b></span>
+            <span class="second-color"><b>O</b></span>
+        </h2>
+        <div id="board" class="board">
+            <div class="cell" onclick="makeMove(0, 0)"></div>
+            <div class="cell" onclick="makeMove(0, 1)"></div>
+            <div class="cell" onclick="makeMove(0, 2)"></div>
+            <div class="cell" onclick="makeMove(1, 0)"></div>
+            <div class="cell" onclick="makeMove(1, 1)"></div>
+            <div class="cell" onclick="makeMove(1, 2)"></div>
+            <div class="cell" onclick="makeMove(2, 0)"></div>
+            <div class="cell" onclick="makeMove(2, 1)"></div>
+            <div class="cell" onclick="makeMove(2, 2)"></div>
+          </div>
+          <div id="status" class="status"></div>
+          <button onclick="resetBoard()">Reset</button>
+        </div>
+      
+        <script>
+          // Tic Tac Toe Game
+      
+      // Initialize the game board
+      let board = [
+        ['', '', ''],
+        ['', '', ''],
+        ['', '', '']
+      ];
+      
+      // Function to check if a player has won
+      function checkWinner(player) {
+        // Check rows
+        for (let i = 0; i < 3; i++) {
+          if (
+            board[i][0] === player &&
+            board[i][1] === player &&
+            board[i][2] === player
+          ) {
+            return true;
+          }
+        }
+      
+        // Check columns
+        for (let i = 0; i < 3; i++) {
+          if (
+            board[0][i] === player &&
+            board[1][i] === player &&
+            board[2][i] === player
+          ) {
+            return true;
+          }
+        }
+      
+        // Check diagonals
+        if (
+          board[0][0] === player &&
+          board[1][1] === player &&
+          board[2][2] === player
+        ) {
+          return true;
+        }
+      
+        if (
+          board[2][0] === player &&
+          board[1][1] === player &&
+          board[0][2] === player
+        ) {
+          return true;
+        }
+      
+        return false;
+      }
+      
+      // Function to check if the game board is full
+      function isBoardFull() {
+        for (let i = 0; i < 3; i++) {
+          for (let j = 0; j < 3; j++) {
+            if (board[i][j] === '') {
+              return false;
+            }
+          }
+        }
+        return true;
+      }
+      
+      // Function to make a move for the computer
+      function computerMove() {
+        // Generate random row and column until an empty cell is found
+        let row, col;
+        do {
+          row = Math.floor(Math.random() * 3);
+          col = Math.floor(Math.random() * 3);
+        } while (board[row][col] !== '');
+      
+        // Make the move for the computer
+        board[row][col] = 'O';
+      
+        // Display the updated board
+        updateBoard();
+      
+        // Check if the computer has won
+        if (checkWinner('O')) {
+          displayStatus('Computer wins!');
+          disableBoard();
+          return;
+        }
+      
+        // Check if the game is a draw
+        if (isBoardFull()) {
+          displayStatus("It's a draw!");
+          disableBoard();
+          return;
+        }
+      
+        // Enable user moves
+        enableBoard();
+      }
+      
+      // Function to update the game board display
+      function updateBoard() {
+        const cells = document.getElementsByClassName('cell');
+        for (let i = 0; i < cells.length; i++) {
+          const row = Math.floor(i / 3);
+          const col = i % 3;
+          cells[i].textContent = board[row][col];
+        }
+      }
+      
+      // Function to display the game status
+      function displayStatus(message) {
+        const status = document.getElementById('status');
+        status.textContent = message;
+      }
+      
+      // Function to handle user moves
+      function makeMove(row, col) {
+        // Check if the selected cell is empty
+        if (board[row][col] !== '') {
+          return;
+        }
+      
+        // Make the move for the user
+        board[row][col] = 'X';
+      
+        // Update the game board display
+        updateBoard();
+      
+        // Check if the user has won
+        if (checkWinner('X')) {
+          displayStatus('You win!');
+          disableBoard();
+          return;
+        }
+      
+        // Check if the game is a draw
+        if (isBoardFull()) {
+          displayStatus("It's a draw!");
+          disableBoard();
+          return;
+        }
+      
+        // Disable user moves while the computer is making its move
+        disableBoard();
+      
+        // Make a move for the computer after a short delay
+        setTimeout(computerMove, 500);
+      }
+      
+      // Function to reset the game board
+      function resetBoard() {
+        board = [
+          ['', '', ''],
+          ['', '', ''],
+          ['', '', '']
+        ];
+        updateBoard();
+        enableBoard();
+        displayStatus('');
+      }
+      
+      // Function to disable user moves
+      function disableBoard() {
+        const cells = document.getElementsByClassName('cell');
+        for (let i = 0; i < cells.length; i++) {
+          cells[i].removeAttribute('onclick');
+        }
+      }
+      
+      // Function to enable user moves
+      function enableBoard() {
+        const cells = document.getElementsByClassName('cell');
+        for (let i = 0; i < cells.length; i++) {
+          cells[i].setAttribute('onclick', `makeMove(${Math.floor(i / 3)}, ${i % 3})`);
+        }
+      }
+      
+      // Initial setup
+      updateBoard();
+      displayStatus('');
+      enableBoard();
+      
+        </script>
+      </body>
+      </html>
+      
